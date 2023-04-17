@@ -12,3 +12,8 @@ variable "zone" {
   description = "the zone where you want to create the resources"
   type        = string
 }
+
+variable "bucket_data_lake" {
+  description = "the bucket name for the data lake"
+  type        = string
+}
