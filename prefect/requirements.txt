@@ -1,0 +1,6 @@
+pandas
+prefect
+prefect-gcp[cloud_storage]
+pyarrow
+kaggle
+python-dotenv

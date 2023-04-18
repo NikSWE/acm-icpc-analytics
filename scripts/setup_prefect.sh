@@ -1,10 +1,12 @@
-apt update 
-apt install python3-venv python3-pip sqlite3 -y
+sudo apt update 
+sudo apt install python3-venv python3-pip sqlite3 -y
+
+cd $HOME
 
 python3 -m venv venv
 source venv/bin/activate
 
-pip install prefect
+pip install -r requirements.txt
 
 # Find the public ip of the VM
 public_ip=$(curl -s ifconfig.me)
@@ -19,3 +21,10 @@ tmux new -d -s prefect-server
 tmux send-keys -t prefect-server 'prefect server start' ENTER
 tmux new -d -s prefect-agent
 tmux send-keys -t prefect-agent 'prefect agent start -q default' ENTER
+
+echo "Sleeping for 1min before running final checks. almost there!"
+
+sleep 1m
+
+prefect block register -f create_blocks.py
+python3 create_deployments.py

@@ -13,3 +13,11 @@ venv/
 .terraform/
 *.lock*
 *.tfstate*
+
+# Environment Variables
+.env
+*_creds.json
+
+# Local
+data/
+ssh/

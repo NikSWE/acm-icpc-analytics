@@ -17,3 +17,18 @@ variable "bucket_data_lake" {
   description = "the bucket name for the data lake"
   type        = string
 }
+
+variable "account_id" {
+  description = "a unique account id for creating the service account"
+  type        = string
+}
+
+variable "kaggle_username" {
+  description = "username present in the token downloaded from kaggle"
+  type        = string
+}
+
+variable "kaggle_key" {
+  description = "key present in the token downloaded from kaggle"
+  type        = string
+}

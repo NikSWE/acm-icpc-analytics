@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/google"
       version = "4.61.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "3.1.0"
+    }
   }
 }
 
@@ -11,6 +15,57 @@ provider "google" {
   project = var.project_id
   region  = var.region
   zone    = var.zone
+}
+
+
+provider "tls" {}
+
+resource "tls_private_key" "ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "ssh_private_key_pem" {
+  content         = tls_private_key.ssh.private_key_pem
+  filename        = "../ssh/id_rsa"
+  file_permission = "0600"
+}
+
+resource "google_service_account" "service_account" {
+  account_id   = var.account_id
+  display_name = var.account_id
+  description  = "service account created via terraform"
+}
+
+resource "google_service_account_key" "service_account_key" {
+  service_account_id = google_service_account.service_account.name
+}
+
+resource "google_project_iam_binding" "service_account_roles" {
+  project = var.project_id
+  for_each = toset([
+    "roles/storage.admin",
+    "roles/bigquery.admin"
+  ])
+  role = each.key
+  members = [
+    "serviceAccount:${google_service_account.service_account.email}",
+  ]
+}
+
+resource "local_file" "service_account_json_key" {
+  depends_on = [
+    google_service_account.service_account
+  ]
+  content         = base64decode(google_service_account_key.service_account_key.private_key)
+  filename        = "../prefect/service_account_creds.json"
+  file_permission = "0644"
+}
+
+resource "local_file" "environment_variables" {
+  content         = "KAGGLE_USERNAME=${var.kaggle_username}\nKAGGLE_KEY=${var.kaggle_key}\n"
+  filename        = "../prefect/.env"
+  file_permission = "0644"
 }
 
 # Enable required APIs for the project
@@ -29,6 +84,8 @@ resource "google_project_service" "storage" {
   disable_on_destroy = false
 }
 
+data "google_client_openid_userinfo" "me" {}
+
 # Provision resources for the project
 resource "google_compute_instance" "prefect_vm" {
   name         = "prefect"
@@ -42,11 +99,65 @@ resource "google_compute_instance" "prefect_vm" {
     }
   }
 
-  metadata_startup_script = file("../scripts/setup_prefect.sh")
+  depends_on = [
+    local_file.service_account_json_key,
+    google_project_service.compute
+  ]
+  metadata = {
+    ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.ssh.public_key_openssh}"
+  }
 
   network_interface {
     network = "default"
     access_config {}
+  }
+
+  connection {
+    type        = "ssh"
+    user        = split("@", data.google_client_openid_userinfo.me.email)[0]
+    host        = self.network_interface[0].access_config[0].nat_ip
+    private_key = tls_private_key.ssh.private_key_pem
+  }
+
+  provisioner "file" {
+    source      = "../prefect/.env"
+    destination = ".env"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/create_blocks.py"
+    destination = "create_blocks.py"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/create_deployments.py"
+    destination = "create_deployments.py"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/ingest_from_kaggle.py"
+    destination = "ingest_from_kaggle.py"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/service_account_creds.json"
+    destination = "service_account_creds.json"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/requirements.txt"
+    destination = "requirements.txt"
+  }
+
+  provisioner "file" {
+    source      = "../scripts/setup_prefect.sh"
+    destination = "setup_prefect.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash setup_prefect.sh"
+    ]
   }
 }
 
