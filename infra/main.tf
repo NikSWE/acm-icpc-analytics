@@ -62,12 +62,6 @@ resource "local_file" "service_account_json_key" {
   file_permission = "0644"
 }
 
-resource "local_file" "environment_variables" {
-  content         = "KAGGLE_USERNAME=${var.kaggle_username}\nKAGGLE_KEY=${var.kaggle_key}\n"
-  filename        = "../prefect/.env"
-  file_permission = "0644"
-}
-
 # Enable required APIs for the project
 resource "google_project_service" "cloud_resource_manager" {
   service            = "cloudresourcemanager.googleapis.com"
@@ -120,11 +114,6 @@ resource "google_compute_instance" "prefect_vm" {
   }
 
   provisioner "file" {
-    source      = "../prefect/.env"
-    destination = ".env"
-  }
-
-  provisioner "file" {
     source      = "../prefect/create_blocks.py"
     destination = "create_blocks.py"
   }
@@ -135,8 +124,8 @@ resource "google_compute_instance" "prefect_vm" {
   }
 
   provisioner "file" {
-    source      = "../prefect/ingest_from_kaggle.py"
-    destination = "ingest_from_kaggle.py"
+    source      = "../prefect/etl_gh_to_gcs.py"
+    destination = "etl_gh_to_gcs.py"
   }
 
   provisioner "file" {
