@@ -45,7 +45,8 @@ resource "google_project_iam_binding" "service_account_roles" {
   project = var.project_id
   for_each = toset([
     "roles/storage.admin",
-    "roles/bigquery.admin"
+    "roles/bigquery.admin",
+    "roles/dataproc.admin"
   ])
   role = each.key
   members = [
@@ -73,8 +74,18 @@ resource "google_project_service" "compute" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "dataproc" {
+  service            = "dataproc.googleapis.com"
+  disable_on_destroy = false
+}
+
 resource "google_project_service" "storage" {
   service            = "storage.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "bigquery" {
+  service            = "bigquery.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -95,7 +106,8 @@ resource "google_compute_instance" "prefect_vm" {
 
   depends_on = [
     local_file.service_account_json_key,
-    google_project_service.compute
+    google_project_service.compute,
+    google_dataproc_cluster.spark_cluster
   ]
   metadata = {
     ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.ssh.public_key_openssh}"
@@ -129,8 +141,18 @@ resource "google_compute_instance" "prefect_vm" {
   }
 
   provisioner "file" {
+    source      = "../prefect/etl_gcs_to_gbq.py"
+    destination = "etl_gcs_to_gbq.py"
+  }
+
+  provisioner "file" {
     source      = "../prefect/service_account_creds.json"
     destination = "service_account_creds.json"
+  }
+
+  provisioner "file" {
+    source      = "../prefect/start_pyspark_jobs.py"
+    destination = "start_pyspark_jobs.py"
   }
 
   provisioner "file" {
@@ -143,9 +165,18 @@ resource "google_compute_instance" "prefect_vm" {
     destination = "setup_prefect.sh"
   }
 
+  provisioner "file" {
+    source      = "../pyspark/create_hosts_dimension_table.py"
+    destination = "create_hosts_dimension_table.py"
+  }
+
   provisioner "remote-exec" {
     inline = [
-      "bash setup_prefect.sh"
+      "echo export CLUSTER=${google_dataproc_cluster.spark_cluster.name} >> .bashrc",
+      "echo export REGION=${var.region} >> .bashrc",
+      "source .bashrc",
+      "bash setup_prefect.sh",
+      "gcloud auth activate-service-account ${google_service_account.service_account.email} --key-file=service_account_creds.json"
     ]
   }
 }
@@ -176,6 +207,58 @@ resource "google_storage_bucket" "data_lake_bucket" {
     }
     condition {
       age = 30
+    }
+  }
+}
+
+resource "google_bigquery_dataset" "raw_dataset" {
+  dataset_id                 = "raw_dataset"
+  delete_contents_on_destroy = true
+}
+
+resource "google_bigquery_dataset" "prod_dataset" {
+  dataset_id = "prod_dataset"
+}
+
+resource "google_bigquery_table" "raw_data" {
+  dataset_id          = google_bigquery_dataset.raw_dataset.dataset_id
+  table_id            = "raw_data"
+  deletion_protection = false
+  range_partitioning {
+    range {
+      start    = 1999
+      end      = 2022
+      interval = 1
+    }
+    field = "year"
+  }
+
+  schema = file("../bq_schemas/raw_data.json")
+}
+
+
+resource "google_dataproc_cluster" "spark_cluster" {
+  name   = "spark-cluster"
+  region = var.region
+
+  cluster_config {
+    gce_cluster_config {
+      zone = var.zone
+    }
+
+    master_config {
+      num_instances = 1
+      machine_type  = "n1-standard-2"
+      disk_config {
+        boot_disk_size_gb = 30
+      }
+    }
+
+    software_config {
+      image_version = "2.0-debian10"
+      override_properties = {
+        "dataproc:dataproc.allow.zero.workers" = "true"
+      }
     }
   }
 }

@@ -1,9 +1,8 @@
 import pandas as pd
 from prefect import flow, task, get_run_logger
-from pathlib import Path
-from prefect_gcp.cloud_storage import GcsBucket
+from prefect_gcp.cloud_storage import GcsBucket, DataFrameSerializationFormat
 from typing import List
-import os
+import numpy as np
 
 
 @task(
@@ -19,6 +18,19 @@ def fetch_dataset(year: int) -> pd.DataFrame:
     return df
 
 
+# Since the dataset doen not contain this detail
+@task(
+    description="add a column indicating the programming language used during the world finals",
+    log_prints=True,
+)
+def add_language_column(df: pd.DataFrame) -> pd.DataFrame:
+    logger = get_run_logger()
+    languages = ["java", "cpp", "c", "kotlin", "python"]
+    df["language"] = np.random.choice(languages, size=len(df))
+    logger.info(f"Successfully added the language column")
+    return df
+
+
 @task(description="transform the column headers to lowercase", log_prints=True)
 def transform_headers_to_lowercase(df: pd.DataFrame) -> pd.DataFrame:
     logger = get_run_logger()
@@ -28,30 +40,14 @@ def transform_headers_to_lowercase(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@task(description="compress the dataframe and store the file locally", log_prints=True)
-def compress_and_store_locally(df: pd.DataFrame, year: int) -> Path:
-    logger = get_run_logger()
-    os.makedirs(Path('./data'), exist_ok=True)
-    path = Path(f"./data/data-{year}.parquet")
-    df.to_parquet(path, compression="gzip")
-    logger.info(f"Successfully stored the data-{year}.parquet file at {path}")
-    return path
-
-
-@task(description="store the parquet file in the data lake", log_prints=True)
-def write_to_gcs(path: Path) -> None:
+@task(description="store the dataframe in the data lake", log_prints=True)
+def write_to_gcs(df: pd.DataFrame, year: int) -> None:
     gcp_block = GcsBucket.load("data-lake")
-    gcp_block.upload_from_path(from_path=path, to_path=path.name)
-
-
-@task(description="delete the local parquet file of the dataset", log_prints=True)
-def delete_local_copy(path: Path) -> None:
-    logger = get_run_logger()
-    if path.exists():
-        logger.info(f"Deleting the file: {path}")
-        os.remove(path)
-    else:
-        logger.info(f"file not found: {path}")
+    gcp_block.upload_from_dataframe(
+        df,
+        to_path=f"data-{year}.parquet",
+        serialization_format=DataFrameSerializationFormat.PARQUET,
+    )
 
 
 @flow(
@@ -60,9 +56,8 @@ def delete_local_copy(path: Path) -> None:
 def etl_gh_to_gcs(year: int) -> None:
     raw_df = fetch_dataset(year)
     df = transform_headers_to_lowercase(raw_df)
-    file_path = compress_and_store_locally(df, year)
-    write_to_gcs(file_path)
-    delete_local_copy(file_path)
+    df = add_language_column(df)
+    write_to_gcs(df, year)
 
 
 @flow(

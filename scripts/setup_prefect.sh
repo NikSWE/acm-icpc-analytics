@@ -1,5 +1,5 @@
 sudo apt update 
-sudo apt install python3-venv python3-pip sqlite3 -y
+sudo apt install python3-venv python3-pip sqlite3 openjdk-11-jdk -y
 
 cd $HOME
 

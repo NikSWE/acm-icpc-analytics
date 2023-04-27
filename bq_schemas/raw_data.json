@@ -1,0 +1,77 @@
+[
+    {
+        "name": "year",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "month",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "host",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "city",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "venue",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "university",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "country",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "gold",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "silver",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "bronze",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "honorable",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "score",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "total",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "penalty",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "language",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    }
+]

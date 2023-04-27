@@ -2,3 +2,5 @@ pandas
 prefect
 prefect-gcp[cloud_storage]
 pyarrow
+pandas-gbq
+pyspark
