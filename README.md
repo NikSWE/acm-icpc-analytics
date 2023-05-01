@@ -12,7 +12,8 @@ During the development of this project, I utilized various technologies that wer
 2. Google BigQuery: was used as the data warehouse
 3. Google Dataproc: for executing spark jobs
 4. Google Looker Studio: for building an interactive dashboard
-5. Google Cloud Compute: for hosting a private instance of Prefect 
+5. Google Cloud Compute: for hosting a private instance of Prefect
+6. Terraform: for provisioning the resources on google cloud
 
 ### Project Structure
 
