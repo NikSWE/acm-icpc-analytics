@@ -122,6 +122,31 @@ Finally, run `terraform apply`. Make sure not to delete the state files created 
 
 ## Challenges
 
+During my work on this project, I encountered several challenges, which I managed to overcome. These included:
+
+1. Issues with the kaggle package available in Python. The package did not work correctly, and I faced problems with authentication and fetching the 2019-2021 dataset from Kaggle. To solve this issue, I created a temporary GitHub repository and uploaded all the data there. However, I do not recommend using this package for now, as it has several open issues on GitHub and may lead to errors in your data pipelines.
+
+2. Automating the setup of Prefect on Google Compute Engine. To achieve this, I used the remote-exec provisioner in Terraform to execute the script. However, I faced some permission issues at first since remote-exec executed the script with root privileges. I later resolved this problem by uploading all the necessary files to VM using the file provisioner in Terraform and using remote-exec solely to execute the script on the server.
+
+3. Difficulties in setting up Google Dataproc using Terraform. The provider documentation could be updated to address this issue. To solve this problem, I created a fake Dataproc instance and used the generated REST API payload to model it in Terraform.
+
+4. Updating the BigQuery connector in the Dataproc cluster was also challenging. However, I was able to solve this issue using the same approach as mentioned above.
+
+Overall, these challenges taught me valuable lessons in problem-solving and helped me to develop a more robust skill set for future projects.
 
 ## Improvements
+
+Here are a few improvements that I will be working on to enhance this project:
+
+1. Remove Prefect: Although Prefect is a useful tool, I plan to migrate the flows to Google Composer. Google Composer is a fully managed Airflow instance that provides a more robust solution than Prefect and will save time when scaling the current Prefect instance.
+
+2. Incorporate more visualizations: The dataset contains more insights than currently visualized on the dashboard. I plan to add more visualizations to better showcase the data.
+
+3. Consider Dataflow: As the dataset is not too large, I can use Dataflow instead of Spark to make data transformations more manageable and cost-effective.
+
+4. Explore additional GCP APIs: I will explore other GCP APIs that can be used to simplify some of the ETL tasks in this project. 
+
+## Contributing
+
+If you are interested in improving this project or encounter any bugs, I highly encourage you to open an issue so that I can take a look at it. Even better, you can submit a pull request with your proposed changes. Thank you in advance!
 
