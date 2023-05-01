@@ -6,8 +6,24 @@ Thanks to the knowledge and skills I acquired during the [Data Engineering Zoomc
 
 ## Technologies
 
+During the development of this project, I utilized various technologies that were covered in the Data Engineering Zoomcamp.
+
+1. Google Cloud Storage: was used as the data lake
+2. Google BigQuery: was used as the data warehouse
+3. Google Dataproc: for executing spark jobs
+4. Google Looker Studio: for building an interactive dashboard
+5. Google Cloud Compute: for hosting a private instance of Prefect 
+
 ### Project Structure
 
+This project contains the following directories:
+
+- `images`: contains all the screenshots captured for writing this readme
+- `infra`: contains all the Terraform scripts needed to provision resources on Google Cloud
+- `prefect`: contains all the Prefect jobs and configurations
+- `pyspark`: contains all the Spark jobs used for building dimension tables
+- `schemas`: contains the JSON representation of the tables created in Google BigQuery
+- `scripts`: contains some handy scripts to make setting up the Prefect server a breeze.
 
 ## Architecture
 
