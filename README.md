@@ -29,6 +29,10 @@ This project contains the following directories:
 
 ![pipeline image](./images/pipeline.png)
 
+## Setting up the Infrastructure
+
+The traditional methods of building the above architecture in Google Cloud using console UI, gcloud CLI, or REST API are time-consuming and error-prone, especially when it comes to scaling infrastructure. To address this, I used Terraform to provision and decommission infrastructure in a more efficient and manageable way. Terraform is an infrastructure as code (IaC) tool that automates the provisioning of infrastructure resources, allowing for easier management at scale. It is a good choice even for small projects as it allows for cost reduction by destroying cloud resources once the project is completed.
+
 ## Workflow
 
 The workflow for this project consists of several stages. Initially, the dataset is fetched from the source, after which it is loaded into Google BigQuery. Following this, dimension tables are created by performing various transformations on the raw dataset using PySpark. Finally, an interactive dashboard can be built using the dimension tables, enabling users to analyze and visualize the data in a meaningful way.
@@ -55,6 +59,8 @@ To ensure the execution of tasks, Prefect uses agents, which are responsible for
 ![agent](./images/agent.png)
 
 ### Data Lake
+
+In the workflow of this project, the dataset is initially fetched from Kaggle and stored in a bucket in Google Cloud Storage, which serves as a data lake. A data lake is a centralized repository that allows for the storage of structured and unstructured data in its native format. Google Cloud Storage is a great choice for a data lake because of its durability, scalability, and low cost. Additionally, it seamlessly integrates with other Google Cloud services such as BigQuery, which is used as the data warehouse in this project.
 
 ![data lake image](./images/data_lake.png)
 
