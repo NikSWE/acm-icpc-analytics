@@ -27,7 +27,12 @@ def spark_submit(file: str):
 
 @flow()
 def start_pyspark_jobs() -> None:
-    jobs = ["create_hosts_dimension_table.py", "create_countries_dimension_table.py"]
+    jobs = [
+        "create_hosts_dimension_table.py",
+        "create_countries_dimension_table.py",
+        "create_teams_dimension_table.py",
+        "create_languages_dimension_table.py",
+    ]
     for job in jobs:
         spark_submit(job)
 

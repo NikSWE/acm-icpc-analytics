@@ -81,6 +81,16 @@ resource "google_compute_instance" "prefect_vm" {
     destination = "create_countries_dimension_table.py"
   }
 
+  provisioner "file" {
+    source      = "${local.pyspark_dir}/create_languages_dimension_table.py"
+    destination = "create_languages_dimension_table.py"
+  }
+
+  provisioner "file" {
+    source      = "${local.pyspark_dir}/create_teams_dimension_table.py"
+    destination = "create_teams_dimension_table.py"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "echo export CLUSTER=${google_dataproc_cluster.spark_cluster.name} >> .bashrc",
