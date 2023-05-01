@@ -55,7 +55,7 @@ Sequence of manual task execution:
 | ![flows](./images/flows.png) | ![flow runs](./images/flow_runs.png) |
 
 
-### Configuration
+#### Configuration
 
 To simplify the sharing of information among flows, I utilized Prefect blocks to securely and easily manage the configuration related to my project. Prefect blocks are reusable building blocks that allow for the creation of modular, shareable, and easily configurable code. These blocks encapsulate specific functionality and are used to create more complex flows. They can also be parameterized to allow for easy configuration and reuse. In my project, I used Prefect blocks to store the necessary credentials for accessing my Google Cloud services, making it easier to maintain and manage this sensitive information.
 
@@ -73,9 +73,13 @@ In the workflow of this project, the dataset is initially fetched from Kaggle an
 
 ### Data Warehouse
 
+After the data has been stored in the data lake, the Prefect job `etl_parent_gcs_to_gbq` creates a new table in BigQuery named `raw_data` and appends all the data from the multiple years of CSV files stored in Cloud Storage into this table. A data warehouse is a central repository of structured, processed, and cleansed data that is optimized for analytical queries and reporting. It is designed to support business intelligence (BI) and decision-making processes by providing a consistent and reliable source of data. Google BigQuery is a good choice for a data warehouse because it provides fast and scalable data processing, efficient data ingestion and storage, and powerful querying and analysis capabilities.
+
 | Table Size                               | Table Info                           |
 | ---------------------------------------- | ------------------------------------ |
 | ![size](./images/raw_data_size.png)      | ![info](./images/raw_data_info.png)  |
+
+After the `raw_data` table is available, we transform and build dimension tables over it to support our data visualization. Dimension tables contain descriptive attributes that provide context and help organize the data in a meaningful way. For example, in a retail dataset, the `product`dimension table would contain attributes such as `product_id`, `product_name`, `brand_name`, and `category_name`.
 
 <p align="center">
   <img src="./images/dimension_tables.png" />
@@ -83,7 +87,9 @@ In the workflow of this project, the dataset is initially fetched from Kaggle an
 
 ### Dashboard
 
-Here is the link https://lookerstudio.google.com/s/oWO5PzCrxTU
+Finally, we leverage the dimension tables to create an interactive dashboard that provides insights about the data. Business Intelligence (BI) tools are used to create these dashboards, enabling users to analyze data and visualize it in a meaningful way. BI tools can connect to data sources, transform data, and display it in various formats such as tables, charts, and graphs.
+
+The dashboard showcases some of the insights that can be gained from the data and provides an example of the types of analysis that can be performed with Looker Studio. Here are some screenshots of the dashboard, and you can also make a copy of the dashboard yourself using this [link](https://lookerstudio.google.com/s/oWO5PzCrxTU). This makes it easy for anyone to replicate the project and gain insights into the types of analysis that can be performed with Looker Studio.
 
 ![dashboard image](./images/dashboard.png)
 
