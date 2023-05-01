@@ -31,8 +31,11 @@ This project contains the following directories:
 
 ## Workflow
 
+The workflow for this project consists of several stages. Initially, the dataset is fetched from the source, after which it is loaded into Google BigQuery. Following this, dimension tables are created by performing various transformations on the raw dataset using PySpark. Finally, an interactive dashboard can be built using the dimension tables, enabling users to analyze and visualize the data in a meaningful way.
 
 ### Orchestration
+
+To orchestrate all the tasks in the workflow, I have chosen to use Prefect. Prefect is a modern data workflow management system that allows for the creation, scheduling, and monitoring of complex data pipelines. It offers features such as error handling, task retries, and dynamic dependencies, making it an ideal choice for data engineering projects. Additionally, Prefect integrates seamlessly with various cloud platforms, including Google Cloud, which I used for this project. By using Prefect, I was able to create a reliable and scalable workflow that automates the various tasks involved in processing the dataset and building the dashboard.
 
 ![deployments](./images/deployments.png)
 
@@ -43,7 +46,11 @@ This project contains the following directories:
 
 ### Configuration
 
+To simplify the sharing of information among flows, I utilized Prefect blocks to securely and easily manage the configuration related to my project. Prefect blocks are reusable building blocks that allow for the creation of modular, shareable, and easily configurable code. These blocks encapsulate specific functionality and are used to create more complex flows. They can also be parameterized to allow for easy configuration and reuse. In my project, I used Prefect blocks to store the necessary credentials for accessing my Google Cloud services, making it easier to maintain and manage this sensitive information.
+
 ![blocks](./images/blocks.png)
+
+To ensure the execution of tasks, Prefect uses agents, which are responsible for running the flows. If an agent is not running, the flows will remain in the scheduled state. To create the default agent, a startup script is executed as part of provisioning the VM for Prefect server. This script contains the necessary configurations and instructions to set up the default agent. By default, Prefect uses the LocalAgent, which runs the tasks locally on the machine where the agent is running. However, it's possible to use other agents like the DaskAgent, which allows distributed computing.
 
 ![agent](./images/agent.png)
 
@@ -62,6 +69,8 @@ This project contains the following directories:
 </p>
 
 ### Dashboard
+
+Here is the link https://lookerstudio.google.com/s/oWO5PzCrxTU
 
 ![dashboard image](./images/dashboard.png)
 
