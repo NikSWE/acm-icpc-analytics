@@ -4,8 +4,8 @@ spark = SparkSession.builder.config("temporaryGcsBucket", "dataproc-temp-bucket-
 
 df = spark.read.format("bigquery").option("table", "raw_dataset.raw_data").load()
 
-countries = df.select(["year", "country"])
+languages = df.select(["year", "language"])
 
-countries.write.format("bigquery").option(
-    "table", "prod_dataset.countries_dimension_table"
+languages.write.format("bigquery").option(
+    "table", "prod_dataset.languages_dimension_table"
 ).save()
