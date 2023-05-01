@@ -42,6 +42,12 @@ The workflow for this project consists of several stages. Initially, the dataset
 
 To orchestrate all the tasks in the workflow, I have chosen to use Prefect. Prefect is a modern data workflow management system that allows for the creation, scheduling, and monitoring of complex data pipelines. It offers features such as error handling, task retries, and dynamic dependencies, making it an ideal choice for data engineering projects. Additionally, Prefect integrates seamlessly with various cloud platforms, including Google Cloud, which I used for this project. By using Prefect, I was able to create a reliable and scalable workflow that automates the various tasks involved in processing the dataset and building the dashboard.
 
+Sequence of manual task execution:
+
+1. etl_parent_gh_to_gcs
+2. etl_parent_gcs_to_gbq
+3. start_pyspark_jobs
+
 ![deployments](./images/deployments.png)
 
 | Flows                        | Flow Runs                            |
