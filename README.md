@@ -8,47 +8,47 @@
 
 ## Architecture
 
-![pipeline image](./docs/pipeline.png)
+![pipeline image](./images/pipeline.png)
 
 ## Workflow
 
 
 ### Orchestration
 
-![deployments](./docs/deployments.png)
+![deployments](./images/deployments.png)
 
 | Flows                      | Flow Runs                          |
 | -------------------------- | ---------------------------------- |
-| ![flows](./docs/flows.png) | ![flow runs](./docs/flow_runs.png) |
+| ![flows](./images/flows.png) | ![flow runs](./images/flow_runs.png) |
 
 
 ### Configuration
 
-![blocks](./docs/blocks.png)
+![blocks](./images/blocks.png)
 
-![agent](./docs/agent.png)
+![agent](./images/agent.png)
 
 ### Data Lake
 
-![data lake image](./docs/data_lake.png)
+![data lake image](./images/data_lake.png)
 
 ### Data Warehouse
 
 | Table Size                             | Table Info                         |
 | -------------------------------------- | ---------------------------------- |
-| ![size](./docs/raw_data_size.png)      | ![info](./docs/raw_data_info.png)  |
+| ![size](./images/raw_data_size.png)      | ![info](./images/raw_data_info.png)  |
 
 <p align="center">
-  <img src="./docs/dimension_tables.png" />
+  <img src="./images/dimension_tables.png" />
 </p>
 
 ### Dashboard
 
-![dashboard image](./docs/dashboard.png)
+![dashboard image](./images/dashboard.png)
 
 | 1999 - 2011                          | 2012 - 2021                        |
 | ------------------------------------ | ---------------------------------- |
-| ![1999 - 2011](./docs/1999_2011.png) | ![flow runs](./docs/2012_2021.png) |
+| ![1999 - 2011](./images/1999_2011.png) | ![flow runs](./images/2012_2021.png) |
 
 
 ## Challenges
