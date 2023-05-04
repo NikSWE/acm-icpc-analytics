@@ -85,11 +85,15 @@ After the `raw_data` table is available, we transform and build dimension tables
   <img src="./images/dimension_tables.png" />
 </p>
 
+To improve query performance, I partitioned all tables in Google BigQuery (GBQ) based on the year column. Partitioning is a technique that divides a large table into smaller, more manageable parts based on specific column(s). By doing so, queries can be processed faster because only the relevant partitions need to be scanned. 
+
 ### Dashboard
 
 Finally, we leverage the dimension tables to create an interactive dashboard that provides insights about the data. Business Intelligence (BI) tools are used to create these dashboards, enabling users to analyze data and visualize it in a meaningful way. BI tools can connect to data sources, transform data, and display it in various formats such as tables, charts, and graphs.
 
 The dashboard showcases some of the insights that can be gained from the data and provides an example of the types of analysis that can be performed with Looker Studio. Here are some screenshots of the dashboard, and you can also make a copy of the dashboard yourself using this [link](https://lookerstudio.google.com/s/oWO5PzCrxTU). This makes it easy for anyone to replicate the project and gain insights into the types of analysis that can be performed with Looker Studio.
+
+_Note_: Make sure you change the data source to the respective tables in your data warehouse (GBQ) after creating the copy of the dashboard
 
 ![dashboard image](./images/dashboard.png)
 
@@ -106,7 +110,13 @@ Before you can deploy this project, make sure that you have installed `gcloud` a
   <img src="./images/cli_tools_version.png" />
 </p>
 
-To deploy the project, you need to authenticate with `gcloud` first. After that, create a new project either through the CLI or the console UI. Also, make sure to edit the location of the CSV files in the `etl_gh_to_gcs.py` file.
+To deploy the project, you need to authenticate with `gcloud` first. 
+
+```bash
+$ gcloud auth application-default login
+```
+
+After that, create a new project either through the CLI or the console UI. Also, make sure to edit the location of the CSV files in the `etl_gh_to_gcs.py` file.
 
 Next, navigate to the `infra` working directory and create a `terraform.tfvars` file. Add values for all the variables mentioned in `variables.tf`. Here is the template you can edit:
 
@@ -118,7 +128,11 @@ bucket_data_lake = ""
 account_id = ""
 ```
 
-Finally, run `terraform apply`. Make sure not to delete the state files created by Terraform; otherwise, you won't be able to destroy the resources created in Google Cloud properly.
+Finally, run `terraform apply`. Make sure not to delete the state files created by Terraform; otherwise, you won't be able to destroy the resources created in Google Cloud properly. Expected time to provision and setup all the resources in Gcloud is somewhere around 8-12 mins.
+
+Once the deployment is complete you can access the prefect server through the url provided as the output at the end. Trigger the jobs in the order mentioned in the workflow. Create a copy of the dashboard and update your data sources.
+
+_Note_: Re-run the `terraform apply` if you get errors related to enabling APIs in Gcloud
 
 ## Challenges
 

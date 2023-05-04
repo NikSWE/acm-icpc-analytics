@@ -1,0 +1,12 @@
+[
+    {
+        "name": "year",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "language",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    }
+]
