@@ -3,5 +3,10 @@
         "name": "year",
         "type": "INTEGER",
         "mode": "NULLABLE"
+    },
+    {
+        "name": "teams",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
     }
 ]
