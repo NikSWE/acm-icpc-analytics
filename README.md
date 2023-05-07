@@ -158,7 +158,9 @@ Here are a few improvements that I will be working on to enhance this project:
 
 3. Consider Dataflow: As the dataset is not too large, I can use Dataflow instead of Spark to make data transformations more manageable and cost-effective.
 
-4. Explore additional GCP APIs: I will explore other GCP APIs that can be used to simplify some of the ETL tasks in this project. 
+4. Explore additional GCP APIs: I will explore other GCP APIs that can be used to simplify some of the ETL tasks in this project.
+
+5. Create service accounts with granular permissions
 
 ## Contributing
 
